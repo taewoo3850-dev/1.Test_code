@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리의 추억 - 데이트 기록</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>💙 우리의 추억</h1>
+                <p class="subtitle">수원 인계동 데이트부터 시작</p>
+            </div>
+            <img src="KakaoTalk_20260801_223015357.jpg" alt="우리 사진" class="header-image">
+        </header>
+
+        <section class="form-section">
+            <h2>새로운 데이트 기록하기</h2>
+            <form id="dateForm" class="date-form">
+                <div class="form-group">
+                    <label for="dateInput">날짜</label>
+                    <input type="date" id="dateInput" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="locationInput">장소</label>
+                    <input type="text" id="locationInput" placeholder="예: 카페, 공원..." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descriptionInput">설명</label>
+                    <textarea id="descriptionInput" placeholder="무엇을 했는지 적어주세요..." rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="moodInput">기분</label>
+                    <select id="moodInput" required>
+                        <option value="">선택하세요</option>
+                        <option value="😍">😍 행복해</option>
+                        <option value="😊">😊 좋아</option>
+                        <option value="😌">😌 편해</option>
+                        <option value="🎉">🎉 설레</option>
+                        <option value="💭">💭 소중해</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">기록 추가</button>
+            </form>
+        </section>
+
+        <section class="stats-section">
+            <div class="stat-card">
+                <h3>총 데이트</h3>
+                <p class="stat-number" id="totalDates">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>이번달</h3>
+                <p class="stat-number" id="monthDates">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>가장 많이 간 곳</h3>
+                <p class="stat-text" id="favoriteLocation">-</p>
+            </div>
+        </section>
+
+        <section class="records-section">
+            <h2>데이트 기록 📝</h2>
+            <div id="recordsList" class="records-list">
+                <p class="no-records">아직 기록이 없습니다. 첫 데이트를 기록해보세요!</p>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>💕 우리의 추억이 가득 찬 페이지입니다 💕</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
