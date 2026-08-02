@@ -7,8 +7,13 @@ class EmailJSManager {
   }
 
   init() {
-    emailjs.init(this.publicKey);
     this.setupContactForm();
+
+    if (typeof emailjs === 'undefined') {
+      console.error('EmailJS 라이브러리 로드 실패: CDN 스크립트를 확인하세요.');
+      return;
+    }
+    emailjs.init(this.publicKey);
   }
 
   setupContactForm() {
@@ -18,6 +23,12 @@ class EmailJSManager {
 
   handleSubmit(e) {
     e.preventDefault();
+
+    if (typeof emailjs === 'undefined') {
+      alert('이메일 서비스를 불러오지 못했습니다. 페이지를 새로고침한 후 다시 시도해주세요.');
+      console.error('EmailJS is undefined - CDN script failed to load.');
+      return;
+    }
 
     const name = document.getElementById('contactName').value;
     const email = document.getElementById('contactEmail').value;
