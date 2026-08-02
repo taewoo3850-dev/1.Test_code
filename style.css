@@ -1,3 +1,27 @@
+:root {
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --bg-dark-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    --bg-primary: white;
+    --bg-secondary: #f9f9f9;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --text-tertiary: #999;
+    --border-color: #e0e0e0;
+    --accent-color: #667eea;
+    --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+body.dark-mode {
+    --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    --bg-primary: #2a2a3e;
+    --bg-secondary: #3a3a4e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --text-tertiary: #808080;
+    --border-color: #4a4a5e;
+    --accent-color: #667eea;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,9 +30,10 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg-gradient);
     min-height: 100vh;
     padding: 20px;
+    transition: background 0.3s ease;
 }
 
 .container {
@@ -17,7 +42,7 @@ body {
 }
 
 .header {
-    background: white;
+    background: var(--bg-primary);
     border-radius: 15px;
     padding: 30px;
     margin-bottom: 30px;
@@ -25,6 +50,8 @@ body {
     display: flex;
     gap: 30px;
     align-items: center;
+    justify-content: space-between;
+    transition: background 0.3s ease;
 }
 
 .header-content {
@@ -34,13 +61,35 @@ body {
 
 .header-content h1 {
     font-size: 2.5em;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 10px;
+    transition: color 0.3s ease;
 }
 
 .subtitle {
     font-size: 1.1em;
-    color: #666;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.theme-toggle {
+    background: var(--accent-color);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.5em;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
 }
 
 .header-image {
@@ -51,17 +100,19 @@ body {
 }
 
 .gallery-section {
-    background: white;
+    background: var(--bg-primary);
     border-radius: 15px;
     padding: 30px;
     margin-bottom: 30px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
 }
 
 .gallery-section h2 {
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 25px;
     font-size: 1.5em;
+    transition: color 0.3s ease;
 }
 
 .gallery {
@@ -76,7 +127,7 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
-    background: white;
+    background: var(--bg-primary);
 }
 
 .gallery-item:hover {
@@ -98,28 +149,32 @@ body {
 
 .gallery-title {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 5px;
     font-size: 1.05em;
+    transition: color 0.3s ease;
 }
 
 .gallery-date {
-    color: #999;
+    color: var(--text-tertiary);
     font-size: 0.9em;
+    transition: color 0.3s ease;
 }
 
 .form-section {
-    background: white;
+    background: var(--bg-primary);
     border-radius: 15px;
     padding: 30px;
     margin-bottom: 30px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
 }
 
 .form-section h2 {
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 20px;
     font-size: 1.5em;
+    transition: color 0.3s ease;
 }
 
 .date-form {
@@ -135,31 +190,34 @@ body {
 
 .form-group label {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 8px;
     font-size: 0.95em;
+    transition: color 0.3s ease;
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
     padding: 12px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 1em;
     font-family: inherit;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s, background 0.3s, color 0.3s;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--accent-color);
 }
 
 .btn-submit {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--accent-gradient);
     color: white;
     padding: 15px;
     border: none;
@@ -183,43 +241,49 @@ body {
 }
 
 .stat-card {
-    background: white;
+    background: var(--bg-primary);
     padding: 20px;
     border-radius: 15px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease;
 }
 
 .stat-card h3 {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.95em;
     margin-bottom: 10px;
+    transition: color 0.3s ease;
 }
 
 .stat-number {
     font-size: 2.5em;
     font-weight: bold;
-    color: #667eea;
+    color: var(--accent-color);
+    transition: color 0.3s ease;
 }
 
 .stat-text {
     font-size: 1.2em;
-    color: #333;
+    color: var(--text-primary);
     font-weight: 600;
+    transition: color 0.3s ease;
 }
 
 .records-section {
-    background: white;
+    background: var(--bg-primary);
     border-radius: 15px;
     padding: 30px;
     margin-bottom: 30px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
 }
 
 .records-section h2 {
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 20px;
     font-size: 1.5em;
+    transition: color 0.3s ease;
 }
 
 .records-list {
@@ -230,20 +294,21 @@ body {
 
 .no-records {
     text-align: center;
-    color: #999;
+    color: var(--text-tertiary);
     padding: 40px;
     font-size: 1.1em;
+    transition: color 0.3s ease;
 }
 
 .record-item {
-    background: #f9f9f9;
-    border-left: 4px solid #667eea;
+    background: var(--bg-secondary);
+    border-left: 4px solid var(--accent-color);
     padding: 15px;
     border-radius: 8px;
     display: flex;
     justify-content: space-between;
     align-items: start;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.3s ease;
 }
 
 .record-item:hover {
@@ -257,22 +322,25 @@ body {
 
 .record-date {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.05em;
     margin-bottom: 5px;
+    transition: color 0.3s ease;
 }
 
 .record-location {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.95em;
     margin-bottom: 8px;
+    transition: color 0.3s ease;
 }
 
 .record-description {
-    color: #777;
+    color: var(--text-secondary);
     font-size: 0.9em;
     margin-bottom: 8px;
     line-height: 1.4;
+    transition: color 0.3s ease;
 }
 
 .record-mood {
@@ -297,9 +365,10 @@ body {
 
 .footer {
     text-align: center;
-    color: white;
+    color: rgba(255, 255, 255, 0.8);
     padding: 20px;
     font-size: 1.1em;
+    transition: color 0.3s ease;
 }
 
 @media (max-width: 768px) {

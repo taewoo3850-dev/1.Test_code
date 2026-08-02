@@ -1,3 +1,45 @@
+class ThemeManager {
+  constructor() {
+    this.theme = this.loadTheme();
+    this.init();
+  }
+
+  init() {
+    this.applyTheme();
+    this.setupEventListener();
+  }
+
+  loadTheme() {
+    return localStorage.getItem('theme') || 'light';
+  }
+
+  saveTheme(theme) {
+    localStorage.setItem('theme', theme);
+  }
+
+  applyTheme() {
+    const isDark = this.theme === 'dark';
+    document.body.classList.toggle('dark-mode', isDark);
+    this.updateToggleButton();
+  }
+
+  updateToggleButton() {
+    const toggle = document.getElementById('themeToggle');
+    toggle.querySelector('.toggle-icon').textContent = this.theme === 'dark' ? '☀️' : '🌙';
+  }
+
+  setupEventListener() {
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('click', () => this.toggle());
+  }
+
+  toggle() {
+    this.theme = this.theme === 'light' ? 'dark' : 'light';
+    this.saveTheme(this.theme);
+    this.applyTheme();
+  }
+}
+
 class DateRecorder {
   constructor() {
     this.dates = this.loadDates();
@@ -128,4 +170,5 @@ class DateRecorder {
   }
 }
 
+const themeManager = new ThemeManager();
 const dateRecorder = new DateRecorder();
