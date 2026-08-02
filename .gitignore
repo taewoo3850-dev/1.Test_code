@@ -1,9 +1,11 @@
 # IDE
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 *~
+123.txt
 
 # OS
 .DS_Store
