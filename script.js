@@ -133,7 +133,7 @@ class DateRecorder {
             <div class="record-location">📍 ${record.location}</div>
             ${record.description ? `<div class="record-description">${record.description}</div>` : ''}
           </div>
-          <div style="display: flex; gap: 10px; align-items: start;">
+          <div class="record-actions">
             <div class="record-mood">${record.mood}</div>
             <button class="record-delete" onclick="dateRecorder.deleteRecord(${record.id})">삭제</button>
           </div>

@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>우리의 추억 - 사진과 데이트 기록</title>
+    <title>우리의 추억</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="header-content">
-                <h1>💙 우리의 추억</h1>
-                <p class="subtitle">함께한 모든 순간들</p>
-            </div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">💙 우리의 추억</h1>
             <button class="theme-toggle" id="themeToggle" title="다크모드 전환">
                 <span class="toggle-icon">🌙</span>
             </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="hero">
+            <p class="subtitle">함께한 모든 순간들을 담아두세요</p>
         </header>
 
         <section class="gallery-section">
@@ -95,16 +98,16 @@
         </section>
 
         <section class="records-section">
-            <h2>데이트 기록 📝</h2>
+            <h2>데이트 기록</h2>
             <div id="recordsList" class="records-list">
                 <p class="no-records">아직 기록이 없습니다. 첫 데이트를 기록해보세요!</p>
             </div>
         </section>
-
-        <footer class="footer">
-            <p>💕 우리의 추억이 가득 찬 페이지입니다 💕</p>
-        </footer>
     </div>
+
+    <footer class="footer">
+        <p>💕 함께한 모든 순간을 소중하게 보관합니다</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
