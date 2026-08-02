@@ -25,11 +25,10 @@ class EmailJSManager {
     const message = document.getElementById('contactMessage').value;
 
     const templateParams = {
-      from_name: name,
-      from_email: email,
+      name: name,
+      email: email,
       subject: subject,
-      message: message,
-      to_email: 'taewoo3850@naver.com'
+      message: message
     };
 
     emailjs.send(this.serviceId, this.templateId, templateParams).then(
