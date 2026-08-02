@@ -378,6 +378,29 @@ body {
     transform: scale(1.05);
 }
 
+.contact-section {
+    background: var(--bg-light);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 60px;
+    box-shadow: var(--shadow);
+    transition: background 0.3s ease;
+}
+
+.contact-section h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 32px;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+}
+
+.contact-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
 .footer {
     text-align: center;
     padding: 40px 20px;

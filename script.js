@@ -1,3 +1,50 @@
+class EmailJSManager {
+  constructor() {
+    this.publicKey = 'RIWA5p0W_K2M3aXq3';
+    this.serviceId = 'service_8wop1bk';
+    this.templateId = 'template_hjo2pc';
+    this.init();
+  }
+
+  init() {
+    emailjs.init(this.publicKey);
+    this.setupContactForm();
+  }
+
+  setupContactForm() {
+    const form = document.getElementById('contactForm');
+    form.addEventListener('submit', (e) => this.handleSubmit(e));
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('contactName').value;
+    const email = document.getElementById('contactEmail').value;
+    const subject = document.getElementById('contactSubject').value;
+    const message = document.getElementById('contactMessage').value;
+
+    const templateParams = {
+      from_name: name,
+      from_email: email,
+      subject: subject,
+      message: message,
+      to_email: 'taewoo3850@naver.com'
+    };
+
+    emailjs.send(this.serviceId, this.templateId, templateParams).then(
+      (response) => {
+        alert('문의가 전송되었습니다! 감사합니다 😊');
+        document.getElementById('contactForm').reset();
+      },
+      (error) => {
+        alert('문의 전송에 실패했습니다. 다시 시도해주세요.');
+        console.error('EmailJS Error:', error);
+      }
+    );
+  }
+}
+
 class ThemeManager {
   constructor() {
     this.theme = this.loadTheme();
@@ -170,5 +217,6 @@ class DateRecorder {
   }
 }
 
+const emailJSManager = new EmailJSManager();
 const themeManager = new ThemeManager();
 const dateRecorder = new DateRecorder();
