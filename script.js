@@ -2,7 +2,7 @@ class EmailJSManager {
   constructor() {
     this.publicKey = 'RIWA5p0W_K2M3aXq3';
     this.serviceId = 'service_8wop1bk';
-    this.templateId = 'template_hjo2pc';
+    this.templateId = 'template_hjyo2pc';
     this.init();
   }
 
