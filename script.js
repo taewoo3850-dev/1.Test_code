@@ -27,7 +27,7 @@ class EmailJSManager {
     const templateParams = {
       name: name,
       email: email,
-      subject: subject,
+      title: subject,
       message: message
     };
 
