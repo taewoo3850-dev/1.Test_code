@@ -56,7 +56,7 @@ class ThemeManager {
   }
 
   loadTheme() {
-    return localStorage.getItem('theme') || 'light';
+    return localStorage.getItem('theme') || 'dark';
   }
 
   saveTheme(theme) {
