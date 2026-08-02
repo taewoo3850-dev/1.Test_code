@@ -216,6 +216,10 @@ class DateRecorder {
   }
 }
 
-const emailJSManager = new EmailJSManager();
-const themeManager = new ThemeManager();
-const dateRecorder = new DateRecorder();
+document.addEventListener('DOMContentLoaded', () => {
+  const emailJSManager = new EmailJSManager();
+  const themeManager = new ThemeManager();
+  const dateRecorder = new DateRecorder();
+
+  window.dateRecorder = dateRecorder;
+});
