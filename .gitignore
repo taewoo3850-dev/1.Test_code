@@ -6,6 +6,8 @@
 *.swo
 *~
 123.txt
+photo_final_reclassify.txt
+노트북_사양.md
 
 # OS
 .DS_Store
