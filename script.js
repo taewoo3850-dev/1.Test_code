@@ -78,11 +78,21 @@ class ThemeManager {
     const isDark = this.theme === 'dark';
     document.body.classList.toggle('dark-mode', isDark);
     this.updateToggleButton();
+    this.syncGiscusTheme();
   }
 
   updateToggleButton() {
     const toggle = document.getElementById('themeToggle');
     toggle.querySelector('.toggle-icon').textContent = this.theme === 'dark' ? '☀️' : '🌙';
+  }
+
+  syncGiscusTheme() {
+    const iframe = document.querySelector('iframe.giscus-frame');
+    if (!iframe) return;
+    iframe.contentWindow.postMessage(
+      { giscus: { setConfig: { theme: this.theme === 'dark' ? 'dark' : 'light' } } },
+      'https://giscus.app'
+    );
   }
 
   setupEventListener() {
@@ -94,6 +104,36 @@ class ThemeManager {
     this.theme = this.theme === 'light' ? 'dark' : 'light';
     this.saveTheme(this.theme);
     this.applyTheme();
+  }
+}
+
+class GiscusManager {
+  constructor(currentTheme) {
+    this.currentTheme = currentTheme;
+    this.init();
+  }
+
+  init() {
+    const container = document.getElementById('giscus-container');
+    if (!container) return;
+
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo', 'taewoo3850-dev/1.Test_code');
+    script.setAttribute('data-repo-id', 'R_kgDOTp_fFQ');
+    script.setAttribute('data-category', 'General');
+    script.setAttribute('data-category-id', 'DIC_kwDOTp_fFc4DC6ul');
+    script.setAttribute('data-mapping', 'pathname');
+    script.setAttribute('data-strict', '0');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-emit-metadata', '0');
+    script.setAttribute('data-input-position', 'bottom');
+    script.setAttribute('data-theme', this.currentTheme === 'dark' ? 'dark' : 'light');
+    script.setAttribute('data-lang', 'ko');
+    script.setAttribute('crossorigin', 'anonymous');
+    script.async = true;
+
+    container.appendChild(script);
   }
 }
 
@@ -230,6 +270,7 @@ class DateRecorder {
 document.addEventListener('DOMContentLoaded', () => {
   const emailJSManager = new EmailJSManager();
   const themeManager = new ThemeManager();
+  const giscusManager = new GiscusManager(themeManager.theme);
   const dateRecorder = new DateRecorder();
 
   window.dateRecorder = dateRecorder;
