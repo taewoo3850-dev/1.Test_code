@@ -150,10 +150,49 @@ body {
     color: var(--text-tertiary);
 }
 
-.gallery-comment-hint {
+.gallery-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.gallery-like-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.gallery-like-btn .like-icon {
+    font-size: 14px;
+}
+
+.gallery-like-btn:hover {
+    border-color: #ff6b6b;
+}
+
+.gallery-like-btn.liked {
+    background: #fff0f0;
+    border-color: #ff6b6b;
+    color: #e74c3c;
+}
+
+body.dark-mode .gallery-like-btn.liked {
+    background: rgba(255, 107, 107, 0.15);
+}
+
+.gallery-comment-count {
     font-size: 13px;
     color: var(--primary);
-    margin-top: 8px;
     font-weight: 600;
 }
 

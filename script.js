@@ -1,3 +1,93 @@
+class GalleryStatsManager {
+  constructor() {
+    this.init();
+  }
+
+  async init() {
+    this.setupLikeButtons();
+    await this.loadStats();
+  }
+
+  getLikedPhotos() {
+    try {
+      return JSON.parse(localStorage.getItem('likedPhotos') || '{}');
+    } catch (e) {
+      return {};
+    }
+  }
+
+  saveLikedPhotos(liked) {
+    localStorage.setItem('likedPhotos', JSON.stringify(liked));
+  }
+
+  setupLikeButtons() {
+    const likedPhotos = this.getLikedPhotos();
+    document.querySelectorAll('.gallery-like-btn').forEach((btn) => {
+      const photoId = btn.dataset.photoId;
+      if (likedPhotos[photoId]) {
+        btn.classList.add('liked');
+        btn.querySelector('.like-icon').textContent = '❤️';
+      }
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleLike(photoId, btn);
+      });
+    });
+  }
+
+  async loadStats() {
+    try {
+      const res = await fetch('/api/stats');
+      const stats = await res.json();
+      Object.keys(stats).forEach((photoId) => {
+        const likeBtn = document.querySelector(`.gallery-like-btn[data-photo-id="${photoId}"]`);
+        const commentEl = document.querySelector(`.gallery-comment-count[data-photo-id="${photoId}"]`);
+        if (likeBtn) likeBtn.querySelector('.like-count').textContent = stats[photoId].likes;
+        if (commentEl) commentEl.querySelector('.comment-count-num').textContent = stats[photoId].comments;
+      });
+    } catch (err) {
+      console.error('Load stats error:', err);
+    }
+  }
+
+  async toggleLike(photoId, btn) {
+    const likedPhotos = this.getLikedPhotos();
+    const isLiked = !!likedPhotos[photoId];
+    const action = isLiked ? 'unlike' : 'like';
+
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/likes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photo: photoId, action })
+      });
+      const data = await res.json();
+
+      if (isLiked) {
+        delete likedPhotos[photoId];
+        btn.classList.remove('liked');
+        btn.querySelector('.like-icon').textContent = '🤍';
+      } else {
+        likedPhotos[photoId] = true;
+        btn.classList.add('liked');
+        btn.querySelector('.like-icon').textContent = '❤️';
+      }
+      this.saveLikedPhotos(likedPhotos);
+      btn.querySelector('.like-count').textContent = data.likes;
+    } catch (err) {
+      console.error('Toggle like error:', err);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  updateCommentCount(photoId, count) {
+    const el = document.querySelector(`.gallery-comment-count[data-photo-id="${photoId}"] .comment-count-num`);
+    if (el) el.textContent = count;
+  }
+}
+
 class EmailJSManager {
   constructor() {
     this.publicKey = 'RIWA5p0W_K2M3aXq3';
@@ -98,8 +188,9 @@ class ThemeManager {
 }
 
 class PhotoModalManager {
-  constructor(themeManager) {
+  constructor(themeManager, galleryStatsManager) {
     this.themeManager = themeManager;
+    this.galleryStatsManager = galleryStatsManager;
     this.modal = document.getElementById('photoModal');
     this.image = document.getElementById('photoModalImage');
     this.titleEl = document.getElementById('photoModalTitle');
@@ -295,6 +386,9 @@ class PhotoModalManager {
       const comments = await res.json();
       this.removeEditToken(commentId);
       this.renderComments(comments);
+      if (this.galleryStatsManager) {
+        this.galleryStatsManager.updateCommentCount(this.currentPhotoId, comments.length);
+      }
     } catch (err) {
       alert('삭제에 실패했습니다.');
       console.error('Delete comment error:', err);
@@ -324,6 +418,9 @@ class PhotoModalManager {
       this.renderComments(data.comments);
       messageInput.value = '';
       localStorage.setItem('commentName', name);
+      if (this.galleryStatsManager) {
+        this.galleryStatsManager.updateCommentCount(this.currentPhotoId, data.comments.length);
+      }
     } catch (err) {
       alert('댓글 전송에 실패했습니다. 다시 시도해주세요.');
       console.error('Submit comment error:', err);
@@ -466,7 +563,8 @@ class DateRecorder {
 document.addEventListener('DOMContentLoaded', () => {
   const emailJSManager = new EmailJSManager();
   const themeManager = new ThemeManager();
-  const photoModalManager = new PhotoModalManager(themeManager);
+  const galleryStatsManager = new GalleryStatsManager();
+  const photoModalManager = new PhotoModalManager(themeManager, galleryStatsManager);
   const dateRecorder = new DateRecorder();
 
   window.dateRecorder = dateRecorder;
