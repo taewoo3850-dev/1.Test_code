@@ -125,6 +125,7 @@ class EmailJSManager {
 
   setupContactForm() {
     const form = document.getElementById('contactForm');
+    if (!form) return;
     form.addEventListener('submit', (e) => this.handleSubmit(e));
   }
 
@@ -220,6 +221,7 @@ class PhotoModalManager {
   }
 
   init() {
+    if (!this.modal) return;
     this.setupGalleryClicks();
     this.closeBtn.addEventListener('click', () => this.close());
     this.overlay.addEventListener('click', () => this.close());
@@ -454,12 +456,14 @@ class DateRecorder {
   }
 
   init() {
+    if (!document.getElementById('recordsList')) return;
     this.setupEventListeners();
     this.render();
   }
 
   setupEventListeners() {
     const form = document.getElementById('dateForm');
+    if (!form) return;
     form.addEventListener('submit', (e) => this.handleSubmit(e));
   }
 
