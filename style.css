@@ -410,9 +410,9 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
-    height: 88vh;
+    height: 96vh;
     background: var(--bg-light);
     border-radius: 20px 20px 0 0;
     overflow-y: auto;
@@ -449,7 +449,7 @@ body {
 
 .photo-modal-image-wrap {
     background: #000;
-    max-height: 40vh;
+    max-height: 28vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -457,12 +457,30 @@ body {
 
 .photo-modal-image {
     width: 100%;
-    max-height: 40vh;
+    max-height: 28vh;
     object-fit: contain;
 }
 
 .photo-modal-comments {
     padding: 20px 20px 60px;
+}
+
+.photo-modal-comments textarea {
+    min-height: 130px !important;
+    font-size: 16px !important;
+    width: 100% !important;
+    padding: 12px !important;
+}
+
+.photo-modal-comments input[type="text"],
+.photo-modal-comments input[type="email"] {
+    font-size: 16px !important;
+    padding: 10px 12px !important;
+}
+
+.photo-modal-comments button {
+    font-size: 15px !important;
+    padding: 10px 20px !important;
 }
 
 .photo-modal-comments h3 {
