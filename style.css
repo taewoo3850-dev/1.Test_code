@@ -189,11 +189,34 @@ body.no-scroll {
     margin-bottom: 60px;
 }
 
-.gallery-section h2 {
-    font-size: 24px;
+.gallery-section h2,
+.form-section h2,
+.records-section h2,
+.contact-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 22px;
     font-weight: 700;
     margin-bottom: 32px;
     color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.gallery-section h2 {
+    font-size: 24px;
+}
+
+.section-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--primary-light);
+    font-size: 18px;
+    flex-shrink: 0;
 }
 
 .gallery {
@@ -204,6 +227,7 @@ body.no-scroll {
 
 .gallery-item {
     background: var(--bg-light);
+    border: 1px solid var(--border);
     border-radius: 16px;
     overflow: hidden;
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
@@ -316,17 +340,11 @@ body.dark-mode .gallery-like-btn.liked {
 /* Form Section */
 .form-section {
     background: var(--bg-light);
+    border: 1px solid var(--border);
     border-radius: 16px;
     padding: 40px;
     margin-bottom: 60px;
     box-shadow: var(--shadow);
-}
-
-.form-section h2 {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 32px;
-    color: var(--text-primary);
 }
 
 .date-form {
@@ -414,8 +432,9 @@ body.dark-mode .gallery-like-btn.liked {
 
 .stat-card {
     background: var(--bg-light);
+    border: 1px solid var(--border);
     padding: 28px;
-    border-radius: 12px;
+    border-radius: 14px;
     text-align: center;
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
@@ -450,17 +469,11 @@ body.dark-mode .gallery-like-btn.liked {
 /* Records Section */
 .records-section {
     background: var(--bg-light);
+    border: 1px solid var(--border);
     border-radius: 16px;
     padding: 40px;
     margin-bottom: 60px;
     box-shadow: var(--shadow);
-}
-
-.records-section h2 {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 32px;
-    color: var(--text-primary);
 }
 
 .records-list {
@@ -826,6 +839,7 @@ body.dark-mode .gallery-like-btn.liked {
 
 .contact-section {
     background: var(--bg-light);
+    border: 1px solid var(--border);
     border-radius: 16px;
     padding: 40px;
     margin-bottom: 60px;
@@ -834,10 +848,6 @@ body.dark-mode .gallery-like-btn.liked {
 }
 
 .contact-section h2 {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 32px;
-    color: var(--text-primary);
     transition: color 0.3s ease;
 }
 
@@ -875,6 +885,7 @@ body.dark-mode .gallery-like-btn.liked {
 /* Story / Policy pages */
 .story-section {
     background: var(--bg-light);
+    border: 1px solid var(--border);
     border-radius: 16px;
     padding: 40px;
     margin-bottom: 32px;
