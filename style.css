@@ -395,6 +395,12 @@ body {
     transition: color 0.3s ease;
 }
 
+#cusdis_thread,
+#cusdis_thread * {
+    max-height: none !important;
+    overflow: visible !important;
+}
+
 .contact-section {
     background: var(--bg-light);
     border-radius: 16px;
