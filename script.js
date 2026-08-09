@@ -169,14 +169,65 @@ class PhotoModalManager {
       <form class="comment-form" id="commentForm">
         <input type="text" id="commentName" class="comment-name-input" placeholder="이름" required maxlength="20" value="${this.escapeHtml(savedName)}">
         <div class="comment-input-row">
+          <button type="button" class="comment-emoji-btn" id="commentEmojiBtn">😊</button>
           <input type="text" id="commentMessage" class="comment-message-input" placeholder="댓글 달기..." required maxlength="300">
           <button type="submit" class="comment-send-btn">전송</button>
         </div>
+        <div class="emoji-picker" id="emojiPicker"></div>
       </form>
     `;
 
     const form = document.getElementById('commentForm');
     form.addEventListener('submit', (e) => this.handleSubmit(e));
+
+    this.setupEmojiPicker();
+  }
+
+  setupEmojiPicker() {
+    const emojis = ['😊', '😍', '🥰', '😘', '💕', '💖', '❤️', '🎉', '👍', '👏', '🥺', '😂', '😭', '🔥', '✨', '🙏', '😆', '💪', '🌸', '🎊'];
+    const emojiBtn = document.getElementById('commentEmojiBtn');
+    const picker = document.getElementById('emojiPicker');
+    const messageInput = document.getElementById('commentMessage');
+
+    picker.innerHTML = emojis.map((e) => `<button type="button" class="emoji-option">${e}</button>`).join('');
+
+    emojiBtn.addEventListener('click', () => {
+      picker.classList.toggle('active');
+    });
+
+    picker.querySelectorAll('.emoji-option').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        messageInput.value += btn.textContent;
+        messageInput.focus();
+        picker.classList.remove('active');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!emojiBtn.contains(e.target) && !picker.contains(e.target)) {
+        picker.classList.remove('active');
+      }
+    });
+  }
+
+  getEditTokens() {
+    try {
+      return JSON.parse(localStorage.getItem('commentEditTokens') || '{}');
+    } catch (e) {
+      return {};
+    }
+  }
+
+  saveEditToken(commentId, token) {
+    const tokens = this.getEditTokens();
+    tokens[commentId] = token;
+    localStorage.setItem('commentEditTokens', JSON.stringify(tokens));
+  }
+
+  removeEditToken(commentId) {
+    const tokens = this.getEditTokens();
+    delete tokens[commentId];
+    localStorage.setItem('commentEditTokens', JSON.stringify(tokens));
   }
 
   async loadComments() {
@@ -200,11 +251,14 @@ class PhotoModalManager {
       return;
     }
 
+    const editTokens = this.getEditTokens();
+
     list.innerHTML = comments.map((c) => {
       const date = new Date(c.createdAt);
       const dateStr = date.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
       const initial = c.name.charAt(0).toUpperCase();
       const color = this.avatarColorFor(c.name);
+      const canDelete = !!editTokens[c.id];
       return `
         <div class="comment-item">
           <div class="comment-avatar-circle" style="background:${color}">${this.escapeHtml(initial)}</div>
@@ -212,12 +266,39 @@ class PhotoModalManager {
             <div class="comment-meta">
               <span class="comment-name">${this.escapeHtml(c.name)}</span>
               <span class="comment-date">${dateStr}</span>
+              ${canDelete ? `<button type="button" class="comment-delete-btn" data-comment-id="${c.id}">삭제</button>` : ''}
             </div>
             <p class="comment-text">${this.escapeHtml(c.message)}</p>
           </div>
         </div>
       `;
     }).join('');
+
+    list.querySelectorAll('.comment-delete-btn').forEach((btn) => {
+      btn.addEventListener('click', () => this.deleteComment(btn.dataset.commentId));
+    });
+  }
+
+  async deleteComment(commentId) {
+    if (!confirm('이 댓글을 삭제하시겠습니까?')) return;
+
+    const editTokens = this.getEditTokens();
+    const token = editTokens[commentId];
+    if (!token) return;
+
+    try {
+      const res = await fetch('/api/comments', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photo: this.currentPhotoId, id: commentId, editToken: token })
+      });
+      const comments = await res.json();
+      this.removeEditToken(commentId);
+      this.renderComments(comments);
+    } catch (err) {
+      alert('삭제에 실패했습니다.');
+      console.error('Delete comment error:', err);
+    }
   }
 
   async handleSubmit(e) {
@@ -238,8 +319,9 @@ class PhotoModalManager {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ photo: this.currentPhotoId, name, message })
       });
-      const comments = await res.json();
-      this.renderComments(comments);
+      const data = await res.json();
+      this.saveEditToken(data.newCommentId, data.editToken);
+      this.renderComments(data.comments);
       messageInput.value = '';
       localStorage.setItem('commentName', name);
     } catch (err) {
