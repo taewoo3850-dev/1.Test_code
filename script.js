@@ -104,6 +104,78 @@ class ThemeManager {
   }
 }
 
+class PhotoModalManager {
+  constructor(themeManager) {
+    this.themeManager = themeManager;
+    this.cusdisAppId = '5ea9934a-3870-4f56-bc66-1e89c0d8a657';
+    this.modal = document.getElementById('photoModal');
+    this.image = document.getElementById('photoModalImage');
+    this.titleEl = document.getElementById('photoModalTitle');
+    this.commentsSlot = document.getElementById('photoModalCommentsSlot');
+    this.closeBtn = document.getElementById('photoModalClose');
+    this.overlay = document.getElementById('photoModalOverlay');
+    this.init();
+  }
+
+  init() {
+    this.setupGalleryClicks();
+    this.closeBtn.addEventListener('click', () => this.close());
+    this.overlay.addEventListener('click', () => this.close());
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') this.close();
+    });
+  }
+
+  setupGalleryClicks() {
+    const items = document.querySelectorAll('.gallery-item');
+    items.forEach((item) => {
+      item.addEventListener('click', () => {
+        const photoId = item.dataset.photoId;
+        const photoTitle = item.dataset.photoTitle;
+        const imgSrc = item.querySelector('img').src;
+        this.open(photoId, imgSrc, photoTitle);
+      });
+    });
+  }
+
+  open(photoId, imgSrc, photoTitle) {
+    this.image.src = imgSrc;
+    this.image.alt = photoTitle;
+    this.titleEl.textContent = `${photoTitle} 댓글`;
+    this.modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    this.loadCusdisThread(photoId, photoTitle);
+  }
+
+  close() {
+    this.modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  loadCusdisThread(photoId, photoTitle) {
+    this.commentsSlot.innerHTML = '';
+
+    const thread = document.createElement('div');
+    thread.id = 'cusdis_thread';
+    thread.setAttribute('data-host', 'https://cusdis.com');
+    thread.setAttribute('data-app-id', this.cusdisAppId);
+    thread.setAttribute('data-page-id', photoId);
+    thread.setAttribute('data-page-url', `https://1-test-code.pages.dev/#${photoId}`);
+    thread.setAttribute('data-page-title', photoTitle);
+    thread.setAttribute('data-theme', this.themeManager.theme === 'dark' ? 'dark' : 'light');
+    this.commentsSlot.appendChild(thread);
+
+    const oldScript = document.getElementById('cusdis-script');
+    if (oldScript) oldScript.remove();
+
+    const script = document.createElement('script');
+    script.id = 'cusdis-script';
+    script.src = 'https://cusdis.com/js/cusdis.es.js';
+    script.async = true;
+    document.body.appendChild(script);
+  }
+}
+
 class DateRecorder {
   constructor() {
     this.dates = this.loadDates();
@@ -237,6 +309,7 @@ class DateRecorder {
 document.addEventListener('DOMContentLoaded', () => {
   const emailJSManager = new EmailJSManager();
   const themeManager = new ThemeManager();
+  const photoModalManager = new PhotoModalManager(themeManager);
   const dateRecorder = new DateRecorder();
 
   window.dateRecorder = dateRecorder;

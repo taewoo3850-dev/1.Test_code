@@ -24,25 +24,28 @@
         <section class="gallery-section">
             <h2>📸 추억의 사진들</h2>
             <div class="gallery">
-                <div class="gallery-item">
+                <div class="gallery-item" data-photo-id="photo-1" data-photo-title="수원 인계동 인생네컷">
                     <img src="KakaoTalk_20260801_223015357.jpg" alt="수원 인계동 인생네컷">
                     <div class="gallery-info">
                         <p class="gallery-title">수원 인계동 인생네컷</p>
                         <p class="gallery-date">2026.08.01</p>
+                        <p class="gallery-comment-hint">💬 댓글 보기</p>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-photo-id="photo-2" data-photo-title="함께한 순간">
                     <img src="KakaoTalk_20260731_222509934.jpg" alt="추억의 사진">
                     <div class="gallery-info">
                         <p class="gallery-title">함께한 순간</p>
                         <p class="gallery-date">2026.07.31</p>
+                        <p class="gallery-comment-hint">💬 댓글 보기</p>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-photo-id="photo-3" data-photo-title="1년 기념">
                     <img src="KakaoTalk_20260731_173415595_02.png" alt="1년 기념 사진">
                     <div class="gallery-info">
                         <p class="gallery-title">1년 기념</p>
                         <p class="gallery-date">2026.07.31</p>
+                        <p class="gallery-comment-hint">💬 댓글 보기</p>
                     </div>
                 </div>
             </div>
@@ -104,17 +107,6 @@
             </div>
         </section>
 
-        <section class="comments-section">
-            <h2>댓글 💬</h2>
-            <div id="cusdis_thread"
-                data-host="https://cusdis.com"
-                data-app-id="5ea9934a-3870-4f56-bc66-1e89c0d8a657"
-                data-page-id="home"
-                data-page-url="https://1-test-code.pages.dev/"
-                data-page-title="우리의 추억"
-            ></div>
-        </section>
-
         <section class="contact-section">
             <h2>문의 받기</h2>
             <form id="contactForm" class="contact-form">
@@ -147,8 +139,22 @@
         <p>💕 함께한 모든 순간을 소중하게 보관합니다</p>
     </footer>
 
+    <div class="photo-modal" id="photoModal">
+        <div class="photo-modal-overlay" id="photoModalOverlay"></div>
+        <div class="photo-modal-sheet">
+            <div class="photo-modal-handle"></div>
+            <button class="photo-modal-close" id="photoModalClose" aria-label="닫기">✕</button>
+            <div class="photo-modal-image-wrap">
+                <img id="photoModalImage" class="photo-modal-image" src="" alt="">
+            </div>
+            <div class="photo-modal-comments">
+                <h3 id="photoModalTitle">댓글</h3>
+                <div id="photoModalCommentsSlot"></div>
+            </div>
+        </div>
+    </div>
+
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
