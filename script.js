@@ -78,18 +78,11 @@ class ThemeManager {
     const isDark = this.theme === 'dark';
     document.body.classList.toggle('dark-mode', isDark);
     this.updateToggleButton();
-    this.syncCusdisTheme();
   }
 
   updateToggleButton() {
     const toggle = document.getElementById('themeToggle');
     toggle.querySelector('.toggle-icon').textContent = this.theme === 'dark' ? '☀️' : '🌙';
-  }
-
-  syncCusdisTheme() {
-    const cusdisThread = document.getElementById('cusdis_thread');
-    if (!cusdisThread) return;
-    cusdisThread.setAttribute('data-theme', this.theme === 'dark' ? 'dark' : 'light');
   }
 
   setupEventListener() {
@@ -107,13 +100,14 @@ class ThemeManager {
 class PhotoModalManager {
   constructor(themeManager) {
     this.themeManager = themeManager;
-    this.cusdisAppId = '5ea9934a-3870-4f56-bc66-1e89c0d8a657';
     this.modal = document.getElementById('photoModal');
     this.image = document.getElementById('photoModalImage');
     this.titleEl = document.getElementById('photoModalTitle');
     this.commentsSlot = document.getElementById('photoModalCommentsSlot');
     this.closeBtn = document.getElementById('photoModalClose');
     this.overlay = document.getElementById('photoModalOverlay');
+    this.currentPhotoId = null;
+    this.avatarColors = ['#FF6B6B', '#4ECDC4', '#556FB5', '#F7B32B', '#9B5DE5', '#00BBF9'];
     this.init();
   }
 
@@ -139,12 +133,14 @@ class PhotoModalManager {
   }
 
   open(photoId, imgSrc, photoTitle) {
+    this.currentPhotoId = photoId;
     this.image.src = imgSrc;
     this.image.alt = photoTitle;
     this.titleEl.textContent = `${photoTitle} 댓글`;
     this.modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    this.loadCusdisThread(photoId, photoTitle);
+    this.renderCommentUI();
+    this.loadComments();
   }
 
   close() {
@@ -152,27 +148,106 @@ class PhotoModalManager {
     document.body.style.overflow = '';
   }
 
-  loadCusdisThread(photoId, photoTitle) {
-    this.commentsSlot.innerHTML = '';
+  escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
 
-    const thread = document.createElement('div');
-    thread.id = 'cusdis_thread';
-    thread.setAttribute('data-host', 'https://cusdis.com');
-    thread.setAttribute('data-app-id', this.cusdisAppId);
-    thread.setAttribute('data-page-id', photoId);
-    thread.setAttribute('data-page-url', `https://1-test-code.pages.dev/#${photoId}`);
-    thread.setAttribute('data-page-title', photoTitle);
-    thread.setAttribute('data-theme', this.themeManager.theme === 'dark' ? 'dark' : 'light');
-    this.commentsSlot.appendChild(thread);
+  avatarColorFor(name) {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return this.avatarColors[Math.abs(hash) % this.avatarColors.length];
+  }
 
-    const oldScript = document.getElementById('cusdis-script');
-    if (oldScript) oldScript.remove();
+  renderCommentUI() {
+    const savedName = localStorage.getItem('commentName') || '';
+    this.commentsSlot.innerHTML = `
+      <div class="comment-list" id="commentList"><p class="comment-loading">불러오는 중...</p></div>
+      <form class="comment-form" id="commentForm">
+        <input type="text" id="commentName" class="comment-name-input" placeholder="이름" required maxlength="20" value="${this.escapeHtml(savedName)}">
+        <div class="comment-input-row">
+          <input type="text" id="commentMessage" class="comment-message-input" placeholder="댓글 달기..." required maxlength="300">
+          <button type="submit" class="comment-send-btn">전송</button>
+        </div>
+      </form>
+    `;
 
-    const script = document.createElement('script');
-    script.id = 'cusdis-script';
-    script.src = 'https://cusdis.com/js/cusdis.es.js';
-    script.async = true;
-    document.body.appendChild(script);
+    const form = document.getElementById('commentForm');
+    form.addEventListener('submit', (e) => this.handleSubmit(e));
+  }
+
+  async loadComments() {
+    const list = document.getElementById('commentList');
+
+    try {
+      const res = await fetch(`/api/comments?photo=${encodeURIComponent(this.currentPhotoId)}`);
+      const comments = await res.json();
+      this.renderComments(comments);
+    } catch (err) {
+      list.innerHTML = '<p class="comment-loading">댓글을 불러오지 못했습니다.</p>';
+      console.error('Load comments error:', err);
+    }
+  }
+
+  renderComments(comments) {
+    const list = document.getElementById('commentList');
+
+    if (!comments || comments.length === 0) {
+      list.innerHTML = '<p class="no-comments">아직 댓글이 없어요. 첫 댓글을 남겨보세요!</p>';
+      return;
+    }
+
+    list.innerHTML = comments.map((c) => {
+      const date = new Date(c.createdAt);
+      const dateStr = date.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const initial = c.name.charAt(0).toUpperCase();
+      const color = this.avatarColorFor(c.name);
+      return `
+        <div class="comment-item">
+          <div class="comment-avatar-circle" style="background:${color}">${this.escapeHtml(initial)}</div>
+          <div class="comment-body">
+            <div class="comment-meta">
+              <span class="comment-name">${this.escapeHtml(c.name)}</span>
+              <span class="comment-date">${dateStr}</span>
+            </div>
+            <p class="comment-text">${this.escapeHtml(c.message)}</p>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async handleSubmit(e) {
+    e.preventDefault();
+    const nameInput = document.getElementById('commentName');
+    const messageInput = document.getElementById('commentMessage');
+    const name = nameInput.value.trim();
+    const message = messageInput.value.trim();
+
+    if (!name || !message) return;
+
+    const submitBtn = e.target.querySelector('.comment-send-btn');
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch('/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photo: this.currentPhotoId, name, message })
+      });
+      const comments = await res.json();
+      this.renderComments(comments);
+      messageInput.value = '';
+      localStorage.setItem('commentName', name);
+    } catch (err) {
+      alert('댓글 전송에 실패했습니다. 다시 시도해주세요.');
+      console.error('Submit comment error:', err);
+    } finally {
+      submitBtn.disabled = false;
+    }
   }
 }
 
