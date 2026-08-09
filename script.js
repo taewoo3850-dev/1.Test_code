@@ -1,3 +1,20 @@
+class SplashManager {
+  constructor() {
+    this.splash = document.getElementById('splashScreen');
+    this.init();
+  }
+
+  init() {
+    if (!this.splash) return;
+    document.body.classList.add('no-scroll');
+    setTimeout(() => {
+      this.splash.classList.add('hidden');
+      document.body.classList.remove('no-scroll');
+      setTimeout(() => this.splash.remove(), 550);
+    }, 1100);
+  }
+}
+
 class GalleryStatsManager {
   constructor() {
     this.init();
@@ -561,6 +578,7 @@ class DateRecorder {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const splashManager = new SplashManager();
   const emailJSManager = new EmailJSManager();
   const themeManager = new ThemeManager();
   const galleryStatsManager = new GalleryStatsManager();
