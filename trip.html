@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>발리 여행 체크리스트</title>
+<style>
+  :root { --bg:#f6f7fb; --card:#fff; --text:#1f2430; --sub:#6b7280; --line:#e5e7eb; --accent:#2563eb; --done:#9ca3af; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111318; --card:#1b1e26; --text:#e8eaf0; --sub:#9aa1b0; --line:#2b303b; --accent:#6ea0ff; --done:#6b7280; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,"Segoe UI","Malgun Gothic",sans-serif; }
+  main { max-width:640px; margin:0 auto; padding:16px; }
+  h1 { font-size:22px; margin:8px 0 4px; }
+  .progress { color:var(--sub); font-size:14px; margin-bottom:12px; }
+  .bar { height:8px; background:var(--line); border-radius:4px; overflow:hidden; margin-bottom:16px; }
+  .bar > div { height:100%; width:0; background:var(--accent); transition:width .2s; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:14px; }
+  h2 { font-size:16px; margin:0 0 8px; }
+  h3 { font-size:14px; color:var(--sub); margin:12px 0 4px; }
+  label { display:flex; align-items:center; gap:12px; padding:10px 2px; min-height:44px; border-top:1px solid var(--line); cursor:pointer; }
+  label:first-of-type { border-top:0; }
+  input[type=checkbox] { width:22px; height:22px; accent-color:var(--accent); flex:none; }
+  label.done span { color:var(--done); text-decoration:line-through; }
+  .del { margin-left:auto; border:0; background:none; color:var(--sub); font-size:18px; padding:6px 8px; }
+  form { display:flex; gap:8px; margin-top:8px; }
+  form input { flex:1; min-width:0; padding:10px; font-size:16px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--text); }
+  form button, .reset { padding:10px 14px; font-size:14px; border:0; border-radius:8px; background:var(--accent); color:#fff; }
+  .reset { background:var(--line); color:var(--text); width:100%; margin-top:4px; }
+  .note { color:var(--sub); font-size:12px; text-align:center; margin:12px 0 24px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>발리 여행 체크리스트</h1>
+  <div class="progress" id="progress"></div>
+  <div class="bar"><div id="fill"></div></div>
+  <div id="root"></div>
+  <button class="reset" id="reset">체크 모두 해제</button>
+  <p class="note">체크 상태는 이 기기의 브라우저에만 저장됩니다. 폰과 PC는 서로 연동되지 않아요.</p>
+</main>
+<script>
+// 항목을 바꾸려면 이 배열만 수정하세요. id는 저장용이라 바꾸지 마세요.
+var SECTIONS = [
+  { title: "1. 면접 준비 (9월 29일)", groups: [ { items: [
+    ["i1","와이파이 잘되는 호텔 찾기"],["i2","노트북 세팅"],["i3","마이크, 스피커, 카메라"],["i4","마우스, 키보드"],["i5","프로그램 깔기"] ] } ] },
+  { title: "2. 인도네시아 입국 준비", groups: [ { items: [
+    ["e1","입국신고서 (올인도네시아 QR)"],["e2","전자비자 (e-VOA)"],["e3","관광세"] ] } ] },
+  { title: "3. 준비물", groups: [
+    { name: "(1) 일상용품", items: [["p1","돼지코"],["p2","비상약"],["p3","샴푸/린스/바디/면도기 및 면도젤"]] },
+    { name: "(2) 물놀이", items: [] },
+    { name: "(3) 운동", items: [] },
+    { name: "(4) 옷", items: [] },
+    { name: "(5) 돈", items: [] } ] },
+  { title: "4. 예약할 것", groups: [ { items: [] } ] },
+  { title: "5. 한국에서 준비해야 될 것", groups: [ { name: "(1) 앱", items: [["k1","와츠앱"]] } ] }
+];
+
+var KEY = "bali-checklist-v1";
+var state = { checked: {}, custom: {} };
+try { state = Object.assign(state, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+function itemsOf(gid, base) {
+  return base.concat((state.custom[gid] || []).map(function (t, i) { return [gid + "_c" + i, t, true, i]; }));
+}
+
+function render() {
+  var root = document.getElementById("root");
+  root.innerHTML = "";
+  var total = 0, done = 0;
+  SECTIONS.forEach(function (s, si) {
+    var sec = document.createElement("section");
+    sec.innerHTML = "<h2></h2>";
+    sec.firstChild.textContent = s.title;
+    s.groups.forEach(function (g, gi) {
+      var gid = "g" + si + "_" + gi;
+      if (g.name) { var h = document.createElement("h3"); h.textContent = g.name; sec.appendChild(h); }
+      itemsOf(gid, g.items).forEach(function (it) {
+        total++;
+        var on = !!state.checked[it[0]];
+        if (on) done++;
+        var lb = document.createElement("label");
+        if (on) lb.className = "done";
+        var cb = document.createElement("input");
+        cb.type = "checkbox"; cb.checked = on;
+        cb.onchange = function () { state.checked[it[0]] = cb.checked; save(); render(); };
+        var sp = document.createElement("span"); sp.textContent = it[1];
+        lb.appendChild(cb); lb.appendChild(sp);
+        if (it[2]) {
+          var d = document.createElement("button");
+          d.type = "button"; d.className = "del"; d.textContent = "✕"; d.setAttribute("aria-label", "삭제");
+          d.onclick = function (e) {
+            e.preventDefault();
+            var n = state.custom[gid].length;
+            state.custom[gid].splice(it[3], 1);
+            for (var j = it[3]; j < n - 1; j++) state.checked[gid + "_c" + j] = state.checked[gid + "_c" + (j + 1)];
+            delete state.checked[gid + "_c" + (n - 1)];
+            save(); render();
+          };
+          lb.appendChild(d);
+        }
+        sec.appendChild(lb);
+      });
+      var f = document.createElement("form");
+      f.innerHTML = '<input placeholder="항목 추가" maxlength="60"><button>추가</button>';
+      f.onsubmit = function (e) {
+        e.preventDefault();
+        var v = f.firstChild.value.trim();
+        if (!v) return;
+        (state.custom[gid] = state.custom[gid] || []).push(v);
+        save(); render();
+      };
+      sec.appendChild(f);
+    });
+    root.appendChild(sec);
+  });
+  document.getElementById("progress").textContent = done + " / " + total + " 완료";
+  document.getElementById("fill").style.width = (total ? done / total * 100 : 0) + "%";
+}
+
+document.getElementById("reset").onclick = function () {
+  if (confirm("체크를 모두 해제할까요?")) { state.checked = {}; save(); render(); }
+};
+render();
+</script>
+</body>
+</html>
